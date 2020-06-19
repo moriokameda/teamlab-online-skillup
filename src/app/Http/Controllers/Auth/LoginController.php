@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Socialite;
 
 class LoginController extends Controller
@@ -52,9 +53,17 @@ class LoginController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function handleProviderCallback(Request $request) {
-        $user = Socialite::driver('github')->user();
 
-        $request->session()->put('github_token', $user->token);
+        $github_user = Socialite::driver('github')->user();
+        $now = date('y/m/d H:i:s');
+        $app_user = DB::select('select * from public.user where github_id = ?', [$github_user->user['login']]);
+
+        if (empty($app_user)) {
+            # code...
+            DB::insert('insert into public.user (github_id, created_at, update_at) values (?,?,?)', [$github_user->user['login'], $now, $now]);
+        }
+
+        $request->session()->put('github_token', $github_user->token);
         return redirect('github');
     }
 }
