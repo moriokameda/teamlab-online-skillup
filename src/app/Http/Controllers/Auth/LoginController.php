@@ -60,7 +60,7 @@ class LoginController extends Controller
 
         if (empty($app_user)) {
             # code...
-            DB::insert('insert into public.user (github_id, "created_at", "update_at") values (?,?,?)', [$github_user->user['login'], $now, $now]);
+            DB::insert('insert into public.user (github_id, "created_at", "UPDATED_AT") values (?,?,?)', [$github_user->user['login'], $now, $now]);
         }
 
         $request->session()->put('github_token', $github_user->token);
