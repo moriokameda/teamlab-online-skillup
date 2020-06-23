@@ -55,7 +55,7 @@ class LoginController extends Controller
     public function handleProviderCallback(Request $request) {
 
         $github_user = Socialite::driver('github')->stateless()->user();
-        $now = date('y/m/d H:i:s');
+        $now = date('Y/m/d H:i:s');
         $app_user = DB::select('select * from public.user where github_id = ?', [$github_user->user['login']]);
 
         if (empty($app_user)) {
